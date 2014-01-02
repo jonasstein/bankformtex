@@ -17,11 +17,21 @@
 \pgfmathsetmacro{\yw}{4.2333} % defined as 1/6 inch =>  1/6 * 25.4 mm = 4.2333 mm
 %\pgfmathsetmacro{\xw}{4.2333} % defined as
 \pgfmathsetmacro{\xs}{9} % x start (own definition)
-\pgfmathsetmacro{\xe}{142} % x end (own definition)
+\pgfmathsetmacro{\xe}{141.5} % x end (own definition)
 
 
 \filldraw[draw=black,color=SEPAOrange] (7.62, 4.5*\yw) rectangle (149.86-7.62,105.83-1); %orange background
 
+\filldraw[draw=black,color=white] (\xs, 5*\yw) rectangle (\xe, 6.5*\yw -1.5); %Recepient
+\filldraw[draw=black,color=white] (\xs, 7*\yw) rectangle (\xe, 8.5*\yw -1.5); %IBAN
+\filldraw[draw=black,color=white] (\xs, 9*\yw) rectangle (\xe, 10.5*\yw -1.5); %BIC
+\filldraw[draw=black,color=white] (\xe-12*5, 11*\yw) rectangle (\xe, 12.5*\yw -1.5); %Value 12 Char 
+
+\filldraw[draw=black,color=white] (\xs, 13*\yw) rectangle (\xe, 14.5*\yw -1.5); %Subject1
+\filldraw[draw=black,color=white] (\xs, 15*\yw) rectangle (\xe, 16.5*\yw -1.5); %Subject2
+\filldraw[draw=black,color=white] (\xs, 17*\yw) rectangle (\xe, 18.5*\yw -1.5); %Subject3
+
+\filldraw[draw=black,color=white] (\xs, 19*\yw) rectangle (\xs+22*5, 20.5*\yw -1.5); % IBAN 22 Char
 
 \filldraw[draw=black,color=white] (149.86-17.59, 19* \yw) rectangle (\xe, 20.5*\yw); % counter
 \filldraw[draw=black,color=white] (\xs, 21* \yw) rectangle (42.52, 24.5*\yw); % date
