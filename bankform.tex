@@ -11,267 +11,32 @@
 \definecolor{SEPABlindcolor}{RGB}{255,0,0}
 
 
+
 % switch on expl3 syntax
 % (_ and : become part of macro names; spaces are ignored; ~ is normal space)
 \ExplSyntaxOn
 % make @ available as part of macro name
 \makeatletter
-% commad to genreate internal lengths
-% use \form_generate_lengths:n {<comma list>}
-\cs_new:Npn \form_generate_lengths:n #1 {
-    \clist_set:Nn \l_tmpa_clist { #1 }
-    \clist_map_inline:Nn \l_tmpa_clist {
-        \expandafter\newlength \csname form @ x ##1 \endcsname
-        \expandafter\newlength \csname form @ y ##1 \endcsname
-    }
-}
-% gererate internal length used in node shapes
-\form_generate_lengths:n {
-    A, Ab, At, Abt,
-    B, Bb, Bt, Bbt,
-    D,
-    C,
-}
-% sep between fields
-\dim_new:N \g_form_sep_dim
-\dim_set:Nn \g_form_sep_dim { 0.5pt }
-% dimensions of the edges in fields
-\dim_new:N \g_form_x_edge_dim
-\dim_set:Nn \g_form_x_edge_dim { 0.5pt }
-\dim_new:N \g_form_y_edge_dim
-\dim_set:Nn \g_form_y_edge_dim { 3pt }
-\dim_new:N \formdividerwidth
-\dim_set:Nn \formdividerwidth { 2\g_form_x_edge_dim + \g_form_sep_dim }
-\dim_new:N \formdividerheight
-\dim_set:Nn \formdividerheight { \g_form_y_edge_dim }
-% new node shapes for fields
-\pgfdeclareshape{form~field~middle}{% from p. 631 in pgfmanual.pdf
-    \inheritsavedanchors[from=rectangle]
-    \inheritanchorborder[from=rectangle]
-    \inheritanchor[from=rectangle]{base}
-    \inheritanchor[from=rectangle]{center}
-    \inheritanchor[from=rectangle]{north}
-    \inheritanchor[from=rectangle]{north~east}
-    \inheritanchor[from=rectangle]{east}
-    \inheritanchor[from=rectangle]{south~east}
-    \inheritanchor[from=rectangle]{south}
-    \inheritanchor[from=rectangle]{south~west}
-    \inheritanchor[from=rectangle]{west}
-    \inheritanchor[from=rectangle]{north~west}
-    \backgroundpath{%  this is new
-        %  store corners
-        \southwest \form@xA = \pgf@x \form@yA = \pgf@y
-        \northeast \form@xC = \pgf@x \form@yC = \pgf@y
-        \form@xB = \form@xC \form@yB = \form@yA
-        \form@xD = \form@xA \form@yD = \form@yC
-        % calculate edges
-        \form@xAt = \form@xA
-        \form@yAt = \form@yA \advance \form@yAt by \g_form_y_edge_dim
-        \form@xAb = \form@xA \advance \form@xAb by \g_form_x_edge_dim
-        \form@yAb = \form@yA
-        \form@xAbt = \form@xAb
-        \form@yAbt = \form@yAt
-        \form@xBt = \form@xB
-        \form@yBt = \form@yB \advance \form@yBt by \g_form_y_edge_dim
-        \form@xBb = \form@xB \advance \form@xBb by -\g_form_x_edge_dim
-        \form@yBb = \form@yB
-        \form@xBbt = \form@xBb
-        \form@yBbt = \form@yBt
-        %  construct main path
-        \pgfpathmoveto{\pgfpoint{\form@xAt}{\form@yAt}}
-        \pgfpathlineto{\pgfpoint{\form@xD}{\form@yD}}
-        \pgfpathlineto{\pgfpoint{\form@xC}{\form@yC}}
-        \pgfpathlineto{\pgfpoint{\form@xBt}{\form@yBt}}
-        \pgfpathlineto{\pgfpoint{\form@xBbt}{\form@yBbt}}
-        \pgfpathlineto{\pgfpoint{\form@xBb}{\form@yBb}}
-        \pgfpathlineto{\pgfpoint{\form@xAb}{\form@yAb}}
-        \pgfpathlineto{\pgfpoint{\form@xAbt}{\form@yAbt}}
-        \pgfpathlineto{\pgfpoint{\form@xAt}{\form@yAt}}
-        \pgfpathclose
-    }
-}
-\pgfdeclareshape{form~field~start}{
-    \inheritsavedanchors[from=rectangle]
-    \inheritanchorborder[from=rectangle]
-    \inheritanchor[from=rectangle]{center}
-    \inheritanchor[from=rectangle]{base}
-    \inheritanchor[from=rectangle]{north}
-    \inheritanchor[from=rectangle]{north~east}
-    \inheritanchor[from=rectangle]{east}
-    \inheritanchor[from=rectangle]{south~east}
-    \inheritanchor[from=rectangle]{south}
-    \inheritanchor[from=rectangle]{south~west}
-    \inheritanchor[from=rectangle]{west}
-    \inheritanchor[from=rectangle]{north~west}
-    \backgroundpath{%  this is new
-        %  store corners
-        \southwest \form@xA = \pgf@x \form@yA = \pgf@y
-        \northeast \form@xC = \pgf@x \form@yC = \pgf@y
-        \form@xB = \form@xC \form@yB = \form@yA
-        \form@xD = \form@xA \form@yD = \form@yC
-        % calculate edges
-        \form@xAt = \form@xA
-        \form@yAt = \form@yA \advance \form@yAt by \g_form_y_edge_dim
-        \form@xAb = \form@xA \advance \form@xAb by \g_form_x_edge_dim
-        \form@yAb = \form@yA
-        \form@xAbt = \form@xAb
-        \form@yAbt = \form@yAt
-        \form@xBt = \form@xB
-        \form@yBt = \form@yB \advance \form@yBt by \g_form_y_edge_dim
-        \form@xBb = \form@xB \advance \form@xBb by -\g_form_x_edge_dim
-        \form@yBb = \form@yB
-        \form@xBbt = \form@xBb
-        \form@yBbt = \form@yBt
-        %  construct main path
-        \pgfpathmoveto{\pgfpoint{\form@xA}{\form@yA}}
-        \pgfpathlineto{\pgfpoint{\form@xD}{\form@yD}}
-        \pgfpathlineto{\pgfpoint{\form@xC}{\form@yC}}
-        \pgfpathlineto{\pgfpoint{\form@xBt}{\form@yBt}}
-        \pgfpathlineto{\pgfpoint{\form@xBbt}{\form@yBbt}}
-        \pgfpathlineto{\pgfpoint{\form@xBb}{\form@yBb}}
-        \pgfpathlineto{\pgfpoint{\form@xA}{\form@yA}}
-        \pgfpathclose
-    }
-}
-\pgfdeclareshape{form~field~end}{
-    \inheritsavedanchors[from=rectangle]
-    \inheritanchorborder[from=rectangle]
-    \inheritanchor[from=rectangle]{center}
-    \inheritanchor[from=rectangle]{base}
-    \inheritanchor[from=rectangle]{north}
-    \inheritanchor[from=rectangle]{north~east}
-    \inheritanchor[from=rectangle]{east}
-    \inheritanchor[from=rectangle]{south~east}
-    \inheritanchor[from=rectangle]{south}
-    \inheritanchor[from=rectangle]{south~west}
-    \inheritanchor[from=rectangle]{west}
-    \inheritanchor[from=rectangle]{north~west}
-    \backgroundpath{%  this is new
-        %  store corners
-        \southwest \form@xA = \pgf@x \form@yA = \pgf@y
-        \northeast \form@xC = \pgf@x \form@yC = \pgf@y
-        \form@xB = \form@xC \form@yB = \form@yA
-        \form@xD = \form@xA \form@yD = \form@yC
-        % calculate edges
-        \form@xAt = \form@xA
-        \form@yAt = \form@yA \advance \form@yAt by \g_form_y_edge_dim
-        \form@xAb = \form@xA \advance \form@xAb by \g_form_x_edge_dim
-        \form@yAb = \form@yA
-        \form@xAbt = \form@xAb
-        \form@yAbt = \form@yAt
-        \form@xBt = \form@xB
-        \form@yBt = \form@yB \advance \form@yBt by \g_form_y_edge_dim
-        \form@xBb = \form@xB \advance \form@xBb by -\g_form_x_edge_dim
-        \form@yBb = \form@yB
-        \form@xBbt = \form@xBb
-        \form@yBbt = \form@yBt
-        %  construct main path
-        \pgfpathmoveto{\pgfpoint{\form@xAt}{\form@yAt}}
-        \pgfpathlineto{\pgfpoint{\form@xD}{\form@yD}}
-        \pgfpathlineto{\pgfpoint{\form@xC}{\form@yC}}
-        \pgfpathlineto{\pgfpoint{\form@xB}{\form@yB}}
-        \pgfpathlineto{\pgfpoint{\form@xAb}{\form@yAb}}
-        \pgfpathlineto{\pgfpoint{\form@xAbt}{\form@yAbt}}
-        \pgfpathlineto{\pgfpoint{\form@xAt}{\form@yAt}}
-        \pgfpathclose
-    }
-}
-% new command to draw a line of fiels
-% usage: \formline*(coord)[field width][scope options]{N}{label}[value]<dividers>
-%                #1   #2       #3           #4        #5    #6    #7      #8
-%        * = ignore spaces in [value]
-%        required: #2, #5, #6,
-%        optional: #1, #3, #4, #7, #8
-\NewDocumentCommand { \formline } { s r() O{3mm} O{} m m o d<> } {
-    % save field width
-    \dim_set:Nn \l_tmpa_dim { #3 }
-    % begin a scope
-    \begin{scope}
-        [every~form~field/.append~style={minimum~width=\dim_use:N \l_tmpa_dim}, #4]
-        % draw fields
-        %% set temp counter to 0
-        \int_set:Nn \l_tmpa_int {0}
-        %% first node (number 0)
-        \node (form~field~#6~0) [at={(#2)}, every~form~field~start] {\strut};
-        %% middle nodes, go through list form 1 to N-1
-        \int_step_inline:nnnn { 1 } { 1 } { #5 - 2 } {
-            %%% draw node
-            \node (form~field~#6~##1) [
-                every~form~field~middle,
-                right=\dim_use:N \g_form_sep_dim of~form~field~#6~\int_use:N \l_tmpa_int
-            ] {\strut};
-            %%% incremet counter by 1
-            \int_incr:N \l_tmpa_int
-        }
-        %% draw last node (number N)
-        \node (form~field~#6~\int_eval:n { #5 - 1 }) [
-            every~form~field~end,
-            right=\dim_use:N \g_form_sep_dim of~form~field~#6~\int_use:N \l_tmpa_int
-        ] {\strut};
-        % draw label
-        \node [every~form~label, above~right=0pt~of~form~field~#6~0.north~west] {#6};
-        % add value, if exist
-        \IfValueT { #7 } {
-            %% save value to token list
-            \tl_set:Nn \l_tmpa_tl { #7 }
-            %% replace input space with space token
-            \IfBooleanF { #1 } {
-                \tl_replace_all:Nnn \l_tmpa_tl { ~ } { \c_space_token }
-            }
-            %% set temp counter to 0
-            \int_set:Nn \l_tmpa_int { 0 }
-            %% iterate through tokes and print digits above fields
-            \tl_map_inline:Nn \l_tmpa_tl {
-                %%% chack overlong values
-                \int_compare:nT { \l_tmpa_int = #5 } {
-                    \node at (form~field~#6~\int_eval:n { \l_tmpa_int - 1 })
-                        [fill=red, font=\bfseries] {ERROR:~value~too~long};% some error message
-                    \tl_map_break:
-                }
-                %%% draw digit
-                \node [every~form~digit] at (form~field~#6~\int_use:N \l_tmpa_int.base) { ##1 };
-                %%% incremet counter by 1
-                \int_incr:N \l_tmpa_int
-            }
-        }
-        % add sub-dividers, if exist
-        \IfValueT { #8 } {
-            %% save lowercase version of #7 to token list
-            \tl_set:Nn \l_tmpa_tl { #8 }
-            %% if it contains "every"
-            \tl_if_in:NnTF \l_tmpa_tl { every } {
-                %%% remove "every"
-                \tl_remove_all:Nn \l_tmpa_tl { every }
-                %%% save to int
-                \int_set:Nn \l_tmpa_int { \l_tmpa_tl }
-                %%% from left (> 0) or right (< 0)?
-                \int_compare:nTF { \l_tmpa_int > 0 } {
-                    %%%% draw marks from left
-                    \int_step_inline:nnnn { \l_tmpa_int - 1 } { \l_tmpa_int } { #5 - 2 } {
-                        \node at
-                            ($(form~field~#6~##1.south~east)+(\dim_use:N \g_form_sep_dim / 2,0)$)
-                            [every~form~divider] {};
-                    }
-                } {
-                    %%%% draw marks from right
-                    \int_step_inline:nnnn { #5 - 1 + \l_tmpa_int } { \l_tmpa_int } { 0 } {
-                        \node at
-                            ($(form~field~#6~##1.south~east)+(\dim_use:N \g_form_sep_dim / 2,0)$)
-                            [every~form~divider] {};
-                    }
-                }
-            } {
-                %%% iterate throug comma list
-                \clist_map_inline:nn { #8 } {
-                    \node at
-                        ($(form~field~#6~##1.south~east)+(\dim_use:N \g_form_sep_dim / 2,0)$)
-                        [every~form~divider] {};
-                }
-            }
-        }
-    \end{scope}
+
+
+%\formlines{\xs}{\yh}{5}{22}{IBAN}
+
+\NewDocumentCommand { \formlines }{mmmmm}
+%\formlines{x,y, width, label}
+{
+
+\filldraw[color=white] (#1, #2) rectangle (#4 * #3 + #1, #2 +1.5 * 4.2333 - 1.5); %Recepient 27 Char
+
+% draw label
+\node[every~form~label, anchor=south~west,align=left] at (#1,#2) {#5};
+
+\foreach \x in {2,...,#4}
+{
+ \draw[color=SEPAOrange, line~width=0.3mm] (#1 + \x * #3 -#3, #2 ) -- (#1 + \x * #3 -#3, #2 + 1.5 * 4.2333 - 1.5);
+ \draw[color=SEPAOrange, line~width=0.8mm] (#1 + \x * #3 -#3, #2 + 3  ) -- (#1 + \x * #3 -#3, #2 + 1.5 * 4.2333 - 1.5);
 }
 
+}
 
 
 
@@ -319,53 +84,69 @@
     },
 }
 
+
+
+
+
+
 \begin{document}
 
 SEPA-Überweisung
 
-\begin{tikzpicture}[x=1 mm, y=-1mm]
+\begin{tikzpicture}[x=1 mm, y=-1 mm, node distance=4 pt]
+
 \pgfmathsetmacro{\yh}{4.2333} % y heigth step defined as 1/6 inch =>  1/6 * 25.4 mm = 4.2333 mm
 \pgfmathsetmacro{\xs}{9} % x start (own definition)
 \pgfmathsetmacro{\xe}{141.5} % x end (own definition)
 \pgfmathsetmacro{\widefield}{4.9859} % def: 134.62 mm / 27
-\pgfmathsetmacro{\narrowfiels}{3.9594} % def: 134.62 mm/ 34
+\pgfmathsetmacro{\narrowfield}{3.9594} % def: 134.62 mm/ 34
 
 \filldraw[draw=black,color=SEPAOrange] (7.62, 4.5*\yh) rectangle (149.86-7.62,105.83-1); %orange background
 
-\filldraw[draw=black,color=white] (\xs, 5*\yh) rectangle (\xe, 6.5*\yh -1.5); %Recepient 27 Char
-\foreach \x in {1,...,26}
-{
- \draw[color=SEPAOrange, line width=0.3mm] (7.62 + \x*\widefield, 5*\yh ) -- (7.62 + \x*\widefield, 6.5*\yh);
- \draw[color=SEPAOrange, line width=0.7mm] (7.62 + \x*\widefield, 5.8*\yh ) -- (7.62 + \x*\widefield, 6.5*\yh);
-}
+%\filldraw[draw=black,color=white] (\xs, 5*\yh) rectangle (\xe, 6.5*\yh -1.5); %Recepient 27 Char
+\formlines{\xs}{5 * \yh}{\widefield}{27}{Zahlungsempfänger}
 
-\filldraw[draw=black,color=white] (\xs, 7*\yh) rectangle (\xe, 8.5*\yh -1.5); %IBAN 34 Char
-\foreach \x in {1,...,33}
- \draw[color=SEPAOrange, line width=0.3mm] (7.62 + \x*4, 7*\yh ) -- (7.62 + \x*4, 8.5*\yh);
 
-\filldraw[draw=black,color=white] (\xs, 9*\yh) rectangle (\xe, 10.5*\yh -1.5); %BIC
-\filldraw[draw=black,color=white] (\xe-12*5, 11*\yh) rectangle (\xe, 12.5*\yh -1.5); %Value 12 Char 
+%\filldraw[draw=black,color=white] (\xs, 7*\yh) rectangle (\xe, 8.5*\yh -1.5); %IBAN 34 Char
+\formlines{\xs}{7 * \yh}{\narrowfield}{34}{IBAN}
 
-\filldraw[draw=black,color=white] (\xs, 13*\yh) rectangle (\xe, 14.5*\yh -1.5); %Subject1
-\filldraw[draw=black,color=white] (\xs, 15*\yh) rectangle (\xe, 16.5*\yh -1.5); %Subject2
-\filldraw[draw=black,color=white] (\xs, 17*\yh) rectangle (\xe, 18.5*\yh -1.5); %Subject3
 
-\filldraw[draw=black,color=white] (\xs, 19*\yh) rectangle (\xs+22*5, 20.5*\yh -1.5); % IBAN 22 Char
+%\filldraw[draw=black,color=white] (\xs, 9*\yh) rectangle (\xe, 10.5*\yh -1.5); %BIC
+\formlines{\xs}{9 * \yh}{\widefield}{9}{BIC}
+
+
+%\filldraw[draw=black,color=white] (\xe-12*5, 11*\yh) rectangle (\xe, 12.5*\yh -1.5); %Value 12 Char 
+\formlines{\xe - 12*5}{11 * \yh}{\widefield}{9}{Betrag: Euro, Cent}
+
+
+%\filldraw[draw=black,color=white] (\xs, 13*\yh) rectangle (\xe, 14.5*\yh -1.5); %Subject1
+\formlines{\xs}{13 * \yh}{\widefield}{27}{Kunden-Referenznummer - Verwendungszweck, ggf. Name und Anschrift des Zahlers}
+\formlines{\xs}{15 * \yh}{\widefield}{27}{noch Verwendungszweck}
+\formlines{\xs}{17 * \yh}{\widefield}{27}{Angaben zum Kontoinhaber/Zahler: Name, Vorname/Firma, Ort}
+
+
+%\filldraw[draw=black,color=white] (\xs, 19*\yh) rectangle (\xs+22*5, 20.5*\yh -1.5); % IBAN 22 Char
+\formlines{\xs}{19 * \yh}{\widefield}{22}{IBAN}
 
 \filldraw[draw=black,color=white] (149.86-17.59, 19* \yh) rectangle (\xe, 20.5*\yh -1.5); % counter
 \filldraw[draw=black,color=white] (\xs, 21* \yh) rectangle (42.52, 24.5*\yh); % date
+\node[every form label, anchor=north west,align=left] at (\xs, 21* \yh) {Datum};
+
+
 \filldraw[draw=black,color=white] (42.52+5, 21*\yh) rectangle (149.86-17.59, 24.5*\yh); % signature
+\node[every form label, anchor=north west,align=left] at (42.52+5, 21*\yh) {Unterschrift(en)};
+
 
 \draw[color=SEPADOrange] (0, 4.5 *\yh) --(149.86, 4.5*\yh); upper dark orange line
 \draw[color=SEPADOrange] (0, 20.5 *\yh) --(149.86, 20.5*\yh); lower dark orange line
 \draw[draw=black,color=black, line width=0.3mm] (0,0) rectangle (149.86,105.83); % black border
 %\draw[align=left] at (\yh,\yh) {SEPA-Überweisung};
 
-\filldraw[draw=black,color=SEPAOrange] (7.62, 4.5*\yh) rectangle (149.86-7.62,105.83-1); %orange background
+%\filldraw[draw=black,color=SEPAOrange] (7.62, 4.5*\yh) rectangle (149.86-7.62,105.83-1); %orange background
 %\formline*(\xs,7*\yh)[4mm]{22}{IBAN}[DE00 2105 0170 0012 3456 78]
 
-\formline*(0,0)[4mm]{22}{IBAN}[DE00 2105 0170 0012 3456 78]
-\draw[color=red] (0, 0) --(22*4mm, 0); lower dark orange line
+%\formliner*(0,0)[4mm]{22}{IBAN}[DE00 2105 0170 0012 3456 78]
+%\draw[color=red] (\xs, \yh) --(\xs+22*4mm, \yh); lower dark orange line % TESTRULER
 
 \end{tikzpicture}
 \end{document} 
