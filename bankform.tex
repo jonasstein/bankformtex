@@ -2,15 +2,18 @@
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
 \usepackage{xparse}
+\usepackage{xcolor}
 \usepackage[ocr-b]{ocr}
 \usetikzlibrary{positioning,fit,calc}
 
 \thispagestyle{empty} % no pagenumber. The form should be a stand alone macro... later.
 
-\definecolor{SEPAOrange}{RGB}{254,213,161}
-\definecolor{SEPADOrange}{RGB}{253,185,19}
-\definecolor{SEPABlindcolor}{RGB}{255,0,0}
+%\definecolor{SEPAOrange}{RGB}{254,213,161}
+\definecolor{SEPAOrange}{cmyk}{0, 0.13, 0.27, 0} % HKS 6 E @ Tonwert 45 %, Tonwert 100 % =  0, 0.45, 1, 0
+\definecolor{SEPADOrange}{cmyk}{0, 0.45, 1, 0}  % HKS 6 E @ Tonwert 100 %
+\definecolor{SEPABlindcolor}{cmyk}{0, 0.71, 0.78 ,0} %HKS 12E Tonwert 20 %  (100 % = 0, 0.85, 0.95, 0)
 
+%FIXME: Values with Tonwert<100 % are estimated!
 
 
 % switch on expl3 syntax
