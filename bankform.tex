@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
 \usepackage{xparse}
+\usepackage[ocr-b]{ocr}
 \usetikzlibrary{positioning,fit,calc}
 
 \thispagestyle{empty} % no pagenumber. The form should be a stand alone macro... later.
@@ -92,7 +93,7 @@
 \begin{tikzpicture}[x=1 mm, y=-1 mm, node distance=4 pt]
 
 \pgfmathsetmacro{\yh}{4.2333} % y heigth step defined as 1/6 inch =>  1/6 * 25.4 mm = 4.2333 mm
-\pgfmathsetmacro{\xs}{9} % x start (own definition)
+\pgfmathsetmacro{\xs}{7.62} % x start (own definition)
 \pgfmathsetmacro{\xe}{141.5} % x end (own definition)
 \pgfmathsetmacro{\widefield}{4.9859} % def: 134.62 mm / 27
 \pgfmathsetmacro{\narrowfield}{3.9594} % def: 134.62 mm/ 34
@@ -101,35 +102,32 @@
 \draw[color=SEPADOrange] (0, 20.5 *\yh) --(149.86, 20.5*\yh); lower dark orange line
 \filldraw[draw=black,color=SEPAOrange] (7.62, 4.5*\yh) rectangle (149.86-7.62,105.83-1); %orange background
 
-\node[anchor=north west,align=left,font=\sffamily] at (5, 0.8*\yh) {\bfseries{SEPA-Überweisung} / Zahlschein};
+\node[anchor=north west,align=left,font=\sffamily] at (5, 0.5*\yh) {{\bfseries SEPA-Überweisung}/Zahlschein};
+\node[anchor=north west,align=left,font=\sffamily] at (5, 1.6*\yh) {\ocr{Dagobert Bank}\\ \ocr{Entenhausen}};
 
+\node[anchor=north west,align=left,font=\sffamily\scriptsize, color=SEPABlindcolor] at (65+5+44+2, 3) { %
+Für Überweisungen in\\ 
+Deutschland und\\
+in andere EU-/EWR-\\
+Staaten in Euro.};
 
-%\filldraw[draw=black,color=white] (\xs, 5*\yh) rectangle (\xe, 6.5*\yh -1.5); %Recepient 27 Char
-\formlines{\xs}{5 * \yh}{\widefield}{27}{Zahlungsempfänger}
+\formlines{\xs}{5 * \yh}{\widefield}{27}{Zahlungsempfänger} %Recepient 27 Char
+\formlines{\xs}{7 * \yh}{\narrowfield}{34}{IBAN} %IBAN 34 Char
+\formlines{\xs}{9 * \yh}{\widefield}{9}{BIC}  %BIC
+\formlines{\xe - 12*5}{11 * \yh}{\widefield}{12}{Betrag: Euro, Cent}  %Value 12 Char 
 
-
-%\filldraw[draw=black,color=white] (\xs, 7*\yh) rectangle (\xe, 8.5*\yh -1.5); %IBAN 34 Char
-\formlines{\xs}{7 * \yh}{\narrowfield}{34}{IBAN}
-
-
-%\filldraw[draw=black,color=white] (\xs, 9*\yh) rectangle (\xe, 10.5*\yh -1.5); %BIC
-\formlines{\xs}{9 * \yh}{\widefield}{9}{BIC}
-
-
-%\filldraw[draw=black,color=white] (\xe-12*5, 11*\yh) rectangle (\xe, 12.5*\yh -1.5); %Value 12 Char 
-\formlines{\xe - 12*5}{11 * \yh}{\widefield}{12}{Betrag: Euro, Cent}
-
-
-%\filldraw[draw=black,color=white] (\xs, 13*\yh) rectangle (\xe, 14.5*\yh -1.5); %Subject1
 \formlines{\xs}{13 * \yh}{\widefield}{27}{Kunden-Referenznummer - Verwendungszweck, ggf. Name und Anschrift des Zahlers}
 \formlines{\xs}{15 * \yh}{\widefield}{27}{noch Verwendungszweck}
 \formlines{\xs}{17 * \yh}{\widefield}{27}{Angaben zum Kontoinhaber/Zahler: Name, Vorname/Firma, Ort}
 
+\formlines{\xs}{19 * \yh}{\widefield}{22}{IBAN} % IBAN 22 Char
 
-%\filldraw[draw=black,color=white] (\xs, 19*\yh) rectangle (\xs+22*5, 20.5*\yh -1.5); % IBAN 22 Char
-\formlines{\xs}{19 * \yh}{\widefield}{22}{IBAN}
 
-\filldraw[draw=black,color=white] (149.86-17.59, 19* \yh) rectangle (\xe, 20.5*\yh -1.5); % counter
+
+\filldraw[draw=black,color=white] (149.86-17.59, 19* \yh) rectangle (\xe, 20.5*\yh -1.5); % Belegschluessel
+\node[anchor=north west,font=\sffamily] at (149.86-17.59 + 1, 19* \yh) {\ocr{08}};
+
+
 \filldraw[draw=black,color=white] (\xs, 21* \yh) rectangle (42.52, 24.5*\yh); % date
 \node[every form label, anchor=north west,align=left] at (\xs, 21* \yh) {Datum};
 
@@ -142,11 +140,10 @@
 \draw[draw=black,color=black, line width=0.3mm] (0,0) rectangle (149.86,105.83); % black border
 %\draw[align=left] at (\yh,\yh) {SEPA-Überweisung};
 
-%\filldraw[draw=black,color=SEPAOrange] (7.62, 4.5*\yh) rectangle (149.86-7.62,105.83-1); %orange background
-%\formline*(\xs,7*\yh)[4mm]{22}{IBAN}[DE00 2105 0170 0012 3456 78]
 
-%\formliner*(0,0)[4mm]{22}{IBAN}[DE00 2105 0170 0012 3456 78]
-%\draw[color=red] (\xs, \yh) --(\xs+22*4mm, \yh); lower dark orange line % TESTRULER
+\draw[color=SEPAOrange] (\xs, 4.5*\yh) --(\xs, 105.83-1); left orange line
+\draw[color=SEPAOrange] (149.86-7.62, 4.5*\yh) --(149.86-7.62, 105.83-1); right orange line
+
 
 \end{tikzpicture}
 \end{document} 
